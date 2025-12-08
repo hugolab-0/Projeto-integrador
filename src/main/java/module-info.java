@@ -3,6 +3,6 @@ module com.example.demo {
     requires javafx.fxml;
 
 
-    opens com.example.demo to javafx.fxml;
-    exports com.example.demo;
+    opens br.com.sp.jandira.senai.VagaCerta to javafx.fxml;
+    exports br.com.sp.jandira.senai.VagaCerta;
 }

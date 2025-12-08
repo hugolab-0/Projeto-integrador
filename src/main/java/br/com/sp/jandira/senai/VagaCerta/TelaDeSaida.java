@@ -1,9 +1,9 @@
-package com.example.demo;
+package br.com.sp.jandira.senai.VagaCerta;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class HelloController {
+public class TelaDeSaida {
     @FXML
     private Label welcomeText;
 
