@@ -24,17 +24,15 @@ public class TelaDeInicio extends Application {
 
 
         // ------- ELEMENTOS DA PAGINA -------
+        Button btnAddUser = new Button ("\uD83D\uDCDD");
+        Button btnExcluir = new Button("\uD83D\uDCDD");
+        Button btnRegistro = new Button("\uD83D\uDCC3");
+        Button btnSair = new Button("\uD83D\uDCDD");
         Label titulo = new Label("Bem-Vindo");
-        Button botao1 = new Button("Iniciar");
-
-
-        // ------- CAIXA HORIZONTAL (HBox) -------
-        HBox caixaHorizontal = new HBox(10);  // espaçamento 10px
-        caixaHorizontal.getChildren().addAll(botao1);
 
         // ------- CAIXA PRINCIPAL VERTICAL (VBox) -------
         VBox caixaPrincipal = new VBox(15); // espaçamento 15px
-        caixaPrincipal.getChildren().addAll(titulo, caixaHorizontal);
+        caixaPrincipal.getChildren().addAll(btnAddUser, btnExcluir, btnRegistro, btnSair, titulo);
 
         // ------- CRIAR A CENA -------
         Scene cena = new Scene(caixaPrincipal, 650, 350);
