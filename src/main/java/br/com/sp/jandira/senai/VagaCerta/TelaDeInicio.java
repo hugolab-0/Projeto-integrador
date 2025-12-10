@@ -32,13 +32,39 @@ public class TelaDeInicio extends Application {
 
         // ------------- AJUSTE NOS ELEMENTOS --------
 
-        titulo.setStyle("-fx-font-size: 50px");
+        titulo.setStyle("-fx-font-size: 50px; -fx-text-fill: #F4F0F0");
 
-        String buttonStyle = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px;";
+        String buttonStyle = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0";
         btnAddUser.setStyle(buttonStyle);
         btnExcluir.setStyle(buttonStyle);
         btnRegistro.setStyle(buttonStyle);
         btnSair.setStyle(buttonStyle);
+
+        btnAddUser.setOnAction(e -> {
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:#F4F0F0; -fx-border-color: #FFB800");
+            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+        });
+        btnExcluir.setOnAction(e -> {
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0; -fx-border-color: #FFB800");
+            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+        });
+        btnRegistro.setOnAction(e -> {
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0; -fx-border-color: #FFB800");
+            btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+        });
+        btnSair.setOnAction(e -> {
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0; -fx-border-color: #FFB800");
+        });
+
 
         // ------- CAIXA PRINCIPAL HORIZONTAL (HBox) -------
         HBox caixaHorizontal = new HBox(15);
@@ -47,12 +73,12 @@ public class TelaDeInicio extends Application {
 
         // ------- CAIXA PRINCIPAL VERTICAL (VBox) -------
         VBox caixaPrincipal = new VBox(15);
-        caixaPrincipal.setStyle("-fx-background-color: blue");
+        caixaPrincipal.setStyle("-fx-background-color: #49414B");
         caixaPrincipal.getChildren().addAll(caixaHorizontal);
 
         // -------- CRIANDO CONTAINER -----------
         StackPane root = new StackPane();
-        root.setStyle("-fx-background-color: pink");
+        root.setStyle("-fx-background-color: #323031");
         root.setPadding(new Insets(20));
         root.getChildren().addAll(caixaPrincipal, titulo);
 
