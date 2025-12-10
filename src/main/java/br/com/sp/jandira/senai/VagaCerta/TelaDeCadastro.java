@@ -23,11 +23,17 @@ public class TelaDeCadastro extends Application {
         Button btnExcluir = new Button("\uD83D\uDDD1");
         Button btnRegistro = new Button("\uD83D\uDCDC");
         Button btnSair = new Button("\uD83C\uDFC3\u200D");
-        Label titulo = new Label("BEM-VINDO");
+
+
+        //--------- CRIAÇÃO DE COLETA DE INFORMAÇÕES ----------
+
+        VBox containerInformacao = new VBox();
+        containerInformacao.setStyle("-fx-background-color: blue");
+
+
+
 
         // ------------- AJUSTE NOS ELEMENTOS --------
-
-        titulo.setStyle("-fx-font-size: 50px; -fx-text-fill: #F4F0F0");
 
         String buttonStyle = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0";
         btnAddUser.setStyle(buttonStyle);
@@ -69,13 +75,14 @@ public class TelaDeCadastro extends Application {
         // ------- CAIXA PRINCIPAL VERTICAL (VBox) -------
         VBox caixaPrincipal = new VBox(15);
         caixaPrincipal.setStyle("-fx-background-color: #49414B");
-        caixaPrincipal.getChildren().addAll(caixaHorizontal);
+        caixaPrincipal.getChildren().addAll(caixaHorizontal, containerInformacao);
 
         // -------- CRIANDO CONTAINER -----------
         StackPane root = new StackPane();
+
         root.setStyle("-fx-background-color: #323031");
         root.setPadding(new Insets(20));
-        root.getChildren().addAll(caixaPrincipal, titulo);
+        root.getChildren().addAll(caixaPrincipal);
 
 
         // ------- CRIAR A CENA -------
