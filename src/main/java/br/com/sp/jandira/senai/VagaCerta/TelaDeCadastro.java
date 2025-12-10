@@ -66,12 +66,16 @@ public class TelaDeCadastro extends Application {
         btnRegistrar.setStyle("-fx-background-color: red");
         btnRegistrar.setPadding(new Insets(15, 40, 15, 40));
 
+        Button btnLimpar = new Button("Limpar");
+        btnLimpar.setStyle("-fx-background-color: red");
+        btnLimpar.setPadding(new Insets(15, 45, 15, 45));
+
         //--------- CRIAÇÃO DE COLETA DE INFORMAÇÕES ----------
 
         VBox caixaDeInformacoes = new VBox(10);
         caixaDeInformacoes.setStyle("-fx-background-color: #3f3242");
         VBox.setMargin(nome,new Insets(8, 0, 0, 10));
-        VBox.setMargin( campoNome,new Insets(0, 0, 0, 10));
+        VBox.setMargin( campoNome,new Insets(0, 0, 10, 10));
         caixaDeInformacoes.setPrefHeight(92);
         caixaDeInformacoes.setMaxWidth(300);
         caixaDeInformacoes.getChildren().addAll(nome, campoNome);
@@ -122,12 +126,17 @@ public class TelaDeCadastro extends Application {
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #FFB800; -fx-border-color: #FFB800");
         });
 
+        // ------- CAIXA PRINCIPAL HORIZONTAL (HBox) -------
+        VBox caixaTotal =new VBox(10);
+        VBox.setMargin(btnRegistrar, new Insets(20, 20, 20, 20));
+        VBox.setMargin(btnLimpar, new Insets(20, 20, 5, 20));
+        caixaTotal.getChildren().addAll(btnRegistrar, btnLimpar);
 
         // ------- CAIXA PRINCIPAL HORIZONTAL (HBox) -------
         HBox caixaHorizontal = new HBox(15);
-        HBox.setMargin(btnRegistrar, new Insets(20, 20, 20, 20));
         caixaHorizontal.setPadding(new Insets(12));
-        caixaHorizontal.getChildren().addAll(btnAddUser, btnExcluir, btnRegistro, btnSair, btnRegistrar);
+        caixaHorizontal.getChildren().addAll(btnAddUser, btnExcluir, btnRegistro, btnSair, caixaTotal);
+
 
         // ------- CAIXA PRINCIPAL VERTICAL (VBox) -------
         VBox caixaPrincipal = new VBox(15);
@@ -135,7 +144,8 @@ public class TelaDeCadastro extends Application {
         VBox.setMargin(caixaDeInformacoes, new Insets(20, 0, 0, 35));
         VBox.setMargin(caixaDeInformacoesCar, new Insets(10, 0, 0, 35));
 
-        caixaPrincipal.getChildren().addAll(caixaHorizontal, caixaDeInformacoes, caixaDeInformacoesCar);
+        caixaPrincipal.getChildren().addAll(caixaTotal, caixaDeInformacoes, caixaDeInformacoesCar);
+
 
         // -------- CRIANDO CONTAINER -----------
 
