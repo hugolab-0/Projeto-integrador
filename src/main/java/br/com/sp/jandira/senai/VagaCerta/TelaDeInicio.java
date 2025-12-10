@@ -23,8 +23,6 @@ public class TelaDeInicio extends Application {
 
         stage.setTitle(" Vaga Certa");
 
-
-
         // ------- ELEMENTOS DA PAGINA -------
         Button btnAddUser = new Button ("\uD83D\uDC64");
         Button btnExcluir = new Button("\uD83D\uDDD1");
@@ -34,21 +32,22 @@ public class TelaDeInicio extends Application {
 
         // ------------- AJUSTE NOS ELEMENTOS --------
 
-        titulo.setStyle("-fx-font-size: 40px");
+        titulo.setStyle("-fx-font-size: 50px");
 
-        btnAddUser.setStyle("-fx-text-alignment: center; -fx-font-size: 35px;");
-        btnExcluir.setStyle("-fx-text-alignment: center; -fx-font-size: 35px;");
-        btnRegistro.setStyle("-fx-text-alignment: center; -fx-font-size: 35px;");
-        btnSair.setStyle("-fx-text-alignment: center; -fx-font-size: 35px;");
+        String buttonStyle = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px;";
+        btnAddUser.setStyle(buttonStyle);
+        btnExcluir.setStyle(buttonStyle);
+        btnRegistro.setStyle(buttonStyle);
+        btnSair.setStyle(buttonStyle);
 
         // ------- CAIXA PRINCIPAL HORIZONTAL (HBox) -------
-        HBox caixaHorizontal = new HBox();
+        HBox caixaHorizontal = new HBox(15);
         caixaHorizontal.setPadding(new Insets(12));
         caixaHorizontal.getChildren().addAll(btnAddUser, btnExcluir, btnRegistro, btnSair);
 
         // ------- CAIXA PRINCIPAL VERTICAL (VBox) -------
         VBox caixaPrincipal = new VBox(15);
-        caixaPrincipal.setStyle("-fx-gap-start-and-end: 10px, 20px, 10px");
+        caixaPrincipal.setStyle("-fx-background-color: blue");
         caixaPrincipal.getChildren().addAll(caixaHorizontal);
 
         // -------- CRIANDO CONTAINER -----------
@@ -59,7 +58,7 @@ public class TelaDeInicio extends Application {
 
 
         // ------- CRIAR A CENA -------
-        Scene cena = new Scene(root, 650, 550);
+        Scene cena = new Scene(root, 750, 550);
 
         // ------- MOSTRAR A JANELA -------
         stage.setScene(cena);
