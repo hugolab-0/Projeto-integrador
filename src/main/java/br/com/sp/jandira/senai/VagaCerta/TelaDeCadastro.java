@@ -18,18 +18,21 @@ public class TelaDeCadastro extends Application {
 
         stage.setTitle(" Vaga Certa");
 
-        // ------- ELEMENTOS DA PAGINA -------
+        // ------- ELEMENTOS PRICIPAIS DA PAGINA -------
         Button btnAddUser = new Button ("\uD83D\uDC64");
         Button btnExcluir = new Button("\uD83D\uDDD1");
         Button btnRegistro = new Button("\uD83D\uDCDC");
         Button btnSair = new Button("\uD83C\uDFC3\u200D");
 
+        // ------- ELEMENTOS DA PAGINA -------
+
 
         //--------- CRIAÇÃO DE COLETA DE INFORMAÇÕES ----------
 
-        VBox containerInformacao = new VBox();
-        containerInformacao.setStyle("-fx-background-color: blue");
-
+        HBox caixaDeInformacoes = new HBox();
+        caixaDeInformacoes.setStyle("-fx-background-color: blue");
+        caixaDeInformacoes.setPadding(new Insets(10, 10, 10, 10));
+        caixaDeInformacoes.setMaxWidth(400);
 
 
 
@@ -75,11 +78,11 @@ public class TelaDeCadastro extends Application {
         // ------- CAIXA PRINCIPAL VERTICAL (VBox) -------
         VBox caixaPrincipal = new VBox(15);
         caixaPrincipal.setStyle("-fx-background-color: #49414B");
-        caixaPrincipal.getChildren().addAll(caixaHorizontal, containerInformacao);
+        VBox.setMargin(caixaDeInformacoes, new Insets(20, 0, 0, 35));
+        caixaPrincipal.getChildren().addAll(caixaHorizontal, caixaDeInformacoes);
 
         // -------- CRIANDO CONTAINER -----------
         StackPane root = new StackPane();
-
         root.setStyle("-fx-background-color: #323031");
         root.setPadding(new Insets(20));
         root.getChildren().addAll(caixaPrincipal);
