@@ -1,12 +1,15 @@
 package br.com.sp.jandira.senai.VagaCerta;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -14,6 +17,55 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class TelaDeExcluir extends Application {
+
+    // Comentário: CLASSE MODELO ESTATICAMENTE DEFINIDA DENTRO DA TELA (Padrão para TableView)
+    public static class Cliente {
+        private final SimpleStringProperty nome;
+        private final SimpleStringProperty modelo;
+        private final SimpleStringProperty placa;
+        private final SimpleStringProperty cor;
+
+        public Cliente(String nome, String modelo, String placa, String cor) {
+            this.nome = new SimpleStringProperty(nome);
+            this.modelo = new SimpleStringProperty(modelo);
+            this.placa = new SimpleStringProperty(placa);
+            this.cor = new SimpleStringProperty(cor);
+        }
+
+        // Getters para a TableView
+        public SimpleStringProperty nomeProperty() { return nome; }
+        public SimpleStringProperty modeloProperty() { return modelo; }
+        public SimpleStringProperty placaProperty() { return placa; }
+        public SimpleStringProperty corProperty() { return cor; }
+
+        // (Mantenho os getters básicos por segurança, embora a TableView use as Properties)
+        public String getNome() { return nome.get(); }
+        public String getModelo() { return modelo.get(); }
+        public String getPlaca() { return placa.get(); }
+        public String getCor() { return cor.get(); }
+    }
+
+    // Comentário: DADOS DE EXEMPLO
+    private final ObservableList<Cliente> data = FXCollections.observableArrayList(
+            new Cliente("João Silva", "Fusca", "ABC-1234", "Azul"),
+            new Cliente("Maria Oliveira", "Gol", "DEF-5678", "Branco"),
+            new Cliente("Pedro Santos", "Celta", "GHI-9012", "Preto"),
+            new Cliente("Ana Costa", "Civic", "JKL-3456", "Vermelho")
+    );
+
+    // Comentário: DEFINIÇÃO DOS ESTILOS EM CONSTANTES PARA REUSO
+    private final String ICON_STYLE_INACTIVE = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0";
+    private final String ICON_STYLE_ACTIVE = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #88ff00; -fx-border-color: #88ff00";
+    private final String ACTION_BTN_STYLE_INACTIVE = "-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px;";
+    private final String ACTION_BTN_STYLE_RETIRAR_ACTIVE = "-fx-background-color: #3f3242; -fx-text-fill: red; -fx-font-size: 20px; -fx-border-color: red;";
+
+    // Comentário: FUNÇÕES DE RESET PARA A LÓGICA DE ATIVAÇÃO
+    private void resetIconStyles(Button... buttons) {
+        for (Button btn : buttons) {
+            btn.setStyle(ICON_STYLE_INACTIVE);
+        }
+    }
+
 
     @Override
     public void start(Stage stage) {
@@ -27,127 +79,83 @@ public class TelaDeExcluir extends Application {
         Button btnSair = new Button("\uD83C\uDFC3\u200D");
 
         // ------- ELEMENTOS DA PAGINA -------
-        Label nome = new Label("Nome do proprietário");
-        nome.setStyle("-fx-font-size: 16px; -fx-font-family: 'Roboto'; -fx-text-fill: #ecdfd2");
 
-        TextField campoNome = new TextField();
-        campoNome.setStyle("-fx-background-color: #ecdfd2");
-        campoNome.setPromptText("Nome");
-        campoNome.setMaxWidth(200);
-        campoNome.setPrefHeight(30);
+        Button btnRetirar = new Button("Excluir");
+        btnRetirar.setStyle(ACTION_BTN_STYLE_INACTIVE);
+        btnRetirar.setPadding(new Insets(10, 50, 10 , 50));
 
-        Label modelo = new Label("Modelo do veículo");
-        modelo.setStyle("-fx-font-size: 20px; -fx-font-family: 'Roboto'; -fx-text-fill: #ecdfd2");
+        //--------- CRIAÇÃO DA PLANILHA (TableView) ----------
 
-        TextField campoModelo = new TextField();
-        campoModelo.setStyle("-fx-background-color: #ecdfd2");
-        campoModelo.setPromptText("Modelo");
-        campoModelo.setMaxWidth(200);
-        campoModelo.setPrefHeight(30);
+        TableView<Cliente> tableViewClientes = new TableView<>();
+        tableViewClientes.setItems(data);
+        tableViewClientes.setEditable(false);
+        tableViewClientes.setMaxWidth(Double.MAX_VALUE);
 
-        Label placa = new Label("Placa do veículo");
-        placa.setStyle("-fx-font-size: 20px; -fx-font-family: 'Roboto'; -fx-text-fill: #ecdfd2");
+        // DEFINIÇÃO DAS COLUNAS (Usando PropertyValueFactory para maior robustez em JavaFX)
+        TableColumn<Cliente, String> colNome = new TableColumn<>("Nome do Proprietário");
+        colNome.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
+        colNome.setPrefWidth(200);
 
-        TextField campoPlaca = new TextField();
-        campoPlaca.setStyle("-fx-background-color: #ecdfd2");
-        campoPlaca.setPromptText("Placa");
-        campoPlaca.setMaxWidth(200);
-        campoPlaca.setPrefHeight(30);
+        TableColumn<Cliente, String> colModelo = new TableColumn<>("Modelo");
+        colModelo.setCellValueFactory(cellData -> cellData.getValue().modeloProperty());
+        colModelo.setPrefWidth(150);
 
-        Label cor = new Label("Cor do veículo");
-        cor.setStyle("-fx-font-size: 20px; -fx-font-family: 'Roboto'; -fx-text-fill: #ecdfd2");
+        TableColumn<Cliente, String> colPlaca = new TableColumn<>("Placa");
+        colPlaca.setCellValueFactory(cellData -> cellData.getValue().placaProperty());
+        colPlaca.setPrefWidth(120);
 
-        TextField campoCor = new TextField();
-        campoCor.setStyle("-fx-background-color: #ecdfd2");
-        campoCor.setPromptText("Cor");
-        campoCor.setMaxWidth(200);
-        campoCor.setPrefHeight(30);
+        TableColumn<Cliente, String> colCor = new TableColumn<>("Cor");
+        colCor.setCellValueFactory(cellData -> cellData.getValue().corProperty());
+        colCor.setPrefWidth(120);
 
-        Button btnRegistrar = new Button("Registrar");
-        btnRegistrar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
-        btnRegistrar.setPadding(new Insets(10, 30, 10 , 30));
+        // Adiciona as colunas à TableView
+        tableViewClientes.getColumns().addAll(colNome, colModelo, colPlaca, colCor);
 
-        Button btnLimpar = new Button("Limpar");
-        btnLimpar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
-        btnLimpar.setPadding(new Insets(10, 40, 10, 40));
 
-        //--------- CRIAÇÃO DE COLETA DE INFORMAÇÕES (VBOX) ----------
-
-        VBox caixaDeInformacoes = new VBox(10);
-        caixaDeInformacoes.setStyle("-fx-background-color: #3f3242");
-        VBox.setMargin(nome,new Insets(8, 0, 0, 10));
-        VBox.setMargin( campoNome,new Insets(0, 0, 10, 10));
-        caixaDeInformacoes.setPrefHeight(80);
-        caixaDeInformacoes.setMaxWidth(390);
-        caixaDeInformacoes.getChildren().addAll(nome, campoNome);
-
-        VBox caixaDeInformacoesCar = new VBox(12);
-        caixaDeInformacoesCar.setStyle("-fx-background-color: #322431");
-        VBox.setMargin( modelo, new Insets(8, 0, 0, 10));
-        VBox.setMargin( placa, new Insets(8, 0, 0, 10));
-        VBox.setMargin( cor, new Insets(8, 0, 0, 10));
-        VBox.setMargin( campoModelo,new Insets(0, 0, 0, 10));
-        VBox.setMargin( campoPlaca,new Insets(0, 0, 0, 10));
-        VBox.setMargin( campoCor,new Insets(0, 0, 0, 10));
-        caixaDeInformacoesCar.setPrefHeight(300);
-        caixaDeInformacoesCar.setMaxWidth(405);
-        caixaDeInformacoesCar.getChildren().addAll(modelo, campoModelo, placa, campoPlaca, cor, campoCor);
+        //--------- CAIXA DE CONTEÚDO PRINCIPAL (VBOX) ----------
+        VBox caixaDeInformacoes = new VBox(12);
+        caixaDeInformacoes.setStyle("-fx-background-color: #322431");
+        caixaDeInformacoes.setPrefHeight(500);
+        caixaDeInformacoes.setMaxWidth(Double.MAX_VALUE);
+        caixaDeInformacoes.setPadding(new Insets(10));
+        caixaDeInformacoes.getChildren().add(tableViewClientes); // Adiciona a TableView aqui
 
         // Caixa de Botões
-        VBox caixaDeBotoes = new VBox(12);
+        HBox caixaDeBotoes = new HBox(20);
         caixaDeBotoes.setAlignment(Pos.CENTER);
         caixaDeBotoes.setPadding(new Insets(20));
-        caixaDeBotoes.setMaxWidth(300);
+        caixaDeBotoes.setMaxWidth(Double.MAX_VALUE);
         caixaDeBotoes.setMaxHeight(300);
-        caixaDeBotoes.getChildren().addAll(btnRegistrar, btnLimpar);
+        caixaDeBotoes.getChildren().addAll(btnRetirar);
 
 
 
         // ------------- AJUSTE NOS ELEMENTOS (Estilos de Botão) --------
 
-        String buttonStyle = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0";
-        btnAddUser.setStyle(buttonStyle);
-        btnExcluir.setStyle(buttonStyle);
-        btnRegistro.setStyle(buttonStyle);
-        btnSair.setStyle(buttonStyle);
+        btnAddUser.setStyle(ICON_STYLE_INACTIVE);
+        btnExcluir.setStyle(ICON_STYLE_ACTIVE);
+        btnRegistro.setStyle(ICON_STYLE_INACTIVE);
+        btnSair.setStyle(ICON_STYLE_INACTIVE);
 
+        // Lógica de ativação/desativação (Mantida)
         btnAddUser.setOnAction(e -> {
-            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #88ff00; -fx-border-color: #88ff00");
-            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            resetIconStyles(btnAddUser, btnExcluir, btnRegistro, btnSair);
+            btnAddUser.setStyle(ICON_STYLE_ACTIVE);
         });
         btnExcluir.setOnAction(e -> {
-            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
-            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            resetIconStyles(btnAddUser, btnExcluir, btnRegistro, btnSair);
+            btnExcluir.setStyle(ICON_STYLE_ACTIVE);
         });
         btnRegistro.setOnAction(e -> {
-            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
-            btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            resetIconStyles(btnAddUser, btnExcluir, btnRegistro, btnSair);
+            btnRegistro.setStyle(ICON_STYLE_ACTIVE);
         });
         btnSair.setOnAction(e -> {
-            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
+            resetIconStyles(btnAddUser, btnExcluir, btnRegistro, btnSair);
+            btnSair.setStyle(ICON_STYLE_ACTIVE);
         });
-
-        btnRegistrar.setOnAction( e -> {
-            btnRegistrar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px;  -fx-border-color: #88ff00; -fx-text-fill:  #88ff00");
-            btnRegistrar.setPadding(new Insets(10, 30, 10 , 30));
-            btnLimpar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
-            btnLimpar.setPadding(new Insets(10, 40, 10, 40));
-        });
-        btnLimpar.setOnAction( e -> {
-            btnRegistrar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
-            btnRegistrar.setPadding(new Insets(10, 30, 10 , 30));
-            btnLimpar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px;  -fx-border-color: rgb(213,19,19); -fx-text-fill:  rgb(197,22,22)");
-            btnLimpar.setPadding(new Insets(10, 40, 10, 40));
-
+        btnRetirar.setOnAction( e -> {
+            btnRetirar.setStyle(ACTION_BTN_STYLE_RETIRAR_ACTIVE);
         });
 
 
@@ -158,22 +166,23 @@ public class TelaDeExcluir extends Application {
 
 
 
-        // NOVO CONTAINER HORIZONTAL DE CONTEÚDO (Para colocar a caixa de botões à direita)
+        // NOVO CONTAINER HORIZONTAL DE CONTEÚDO
         VBox colunaDeInformacoes = new VBox(15);
-        colunaDeInformacoes.getChildren().addAll(caixaDeInformacoes, caixaDeInformacoesCar);
+        colunaDeInformacoes.setAlignment(Pos.CENTER);
+        colunaDeInformacoes.getChildren().addAll(caixaDeInformacoes);
 
 
         HBox conteudoHorizontal = new HBox(30);
         conteudoHorizontal.setPadding(new Insets(10, 35, 10, 35));
-        // FORÇA A COLUNA DE INFORMAÇÕES A CRESCER HORIZONTALMENTE
-        // Isso garante que ela ocupe todo o espaço na esquerda
+
         HBox.setHgrow(colunaDeInformacoes, Priority.ALWAYS);
-        conteudoHorizontal.getChildren().addAll(caixaDeBotoes, colunaDeInformacoes);
+        conteudoHorizontal.getChildren().addAll( colunaDeInformacoes);
 
         // ------- CAIXA PRINCIPAL VERTICAL (VBox) -------
         VBox caixaPrincipal = new VBox(15);
         caixaPrincipal.setStyle("-fx-background-color: #49414B");
-        caixaPrincipal.getChildren().addAll(caixaHorizontal, conteudoHorizontal);
+        VBox.setVgrow(conteudoHorizontal, Priority.ALWAYS);
+        caixaPrincipal.getChildren().addAll( caixaHorizontal, conteudoHorizontal, caixaDeBotoes);
 
         // -------- CRIANDO CONTAINER (StackPane) -----------
         StackPane root = new StackPane();
@@ -194,5 +203,3 @@ public class TelaDeExcluir extends Application {
         launch(args);
     }
 }
-
-
