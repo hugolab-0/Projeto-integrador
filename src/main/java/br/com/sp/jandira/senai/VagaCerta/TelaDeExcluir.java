@@ -8,12 +8,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority; // Importante para o Priority.ALWAYS
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class TelaDeCadastro extends Application {
+public class TelaDeExcluir extends Application {
 
     @Override
     public void start(Stage stage) {
@@ -168,7 +168,7 @@ public class TelaDeCadastro extends Application {
         // FORÇA A COLUNA DE INFORMAÇÕES A CRESCER HORIZONTALMENTE
         // Isso garante que ela ocupe todo o espaço na esquerda
         HBox.setHgrow(colunaDeInformacoes, Priority.ALWAYS);
-        conteudoHorizontal.getChildren().addAll(colunaDeInformacoes, caixaDeBotoes);
+        conteudoHorizontal.getChildren().addAll(caixaDeBotoes, colunaDeInformacoes);
 
         // ------- CAIXA PRINCIPAL VERTICAL (VBox) -------
         VBox caixaPrincipal = new VBox(15);
@@ -194,3 +194,5 @@ public class TelaDeCadastro extends Application {
         launch(args);
     }
 }
+
+
