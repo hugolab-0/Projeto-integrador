@@ -19,7 +19,7 @@ public class TelaDeCadastro extends Application {
     String csvPasta = "src/main/data/veiculo_estacionados.csv";
     String csvPasta2 = "src/main/data/historico_do_estacionamento.csv";
 
-    private void salvarRegistroCSV(String nome, String modelo, String placa, String cor) {
+    private void salvarRegistroCSV(String iDDoVeiculo, String nome, String modelo, String placa, String cor) {
 
         String linha = nome + ";" + modelo + ";" + placa + ";" + cor + "\n";
 
@@ -166,12 +166,13 @@ public class TelaDeCadastro extends Application {
             btnLimpar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
             btnLimpar.setPadding(new Insets(10, 40, 10, 40));
 
+            String iDDoVeiculo = java.util.UUID.randomUUID().toString();
             String nomeProprietario = campoNome.getText();
             String modeloVeiculo = campoModelo.getText();
             String placaVeiculo = campoPlaca.getText();
             String corVeiculo = campoCor.getText();
 
-            if (!nomeProprietario.isEmpty() &&
+            if (!iDDoVeiculo.isEmpty() && !nomeProprietario.isEmpty() &&
                     !modeloVeiculo.isEmpty() &&
                     !placaVeiculo.isEmpty() &&
                     !corVeiculo.isEmpty()) {
@@ -181,7 +182,7 @@ public class TelaDeCadastro extends Application {
                 campoPlaca.clear();
                 campoCor.clear();
 
-                salvarRegistroCSV(nomeProprietario, modeloVeiculo, placaVeiculo, corVeiculo);
+                salvarRegistroCSV(iDDoVeiculo, nomeProprietario, modeloVeiculo, placaVeiculo, corVeiculo);
 
             } else {
             System.out.println("Erro: Preencha todos os campos antes de registrar.");

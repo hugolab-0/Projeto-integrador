@@ -55,7 +55,7 @@ public class TelaDeRegistro extends Application {
         TableColumn<String[], String> col3 = criarColuna("MODELO", 2);
         TableColumn<String[], String> col4 = criarColuna("PLACA", 3);
         TableColumn<String[], String> col5 = criarColuna("COR", 4);
-        TableColumn<String[], String> col6 = criarColuna("Total a ser pago", 6);
+        TableColumn<String[], String> col6 = criarColuna("Total a ser pago", 5);
 
 
 
@@ -119,14 +119,14 @@ public class TelaDeRegistro extends Application {
         btnRegistro.setOnAction( e -> {
             String[] linhaSelecionada = table.getSelectionModel().getSelectedItem();
 
-            if (linhaSelecionada == null) {
+            if (linhaSelecionada != null) {
                 System.out.println("Nenhuma linha selecionada.");
                 return;
+            }else {
+
+                dadosVeiculos.remove(linhaSelecionada);
+                excluirCSV(caminhoArquivo);
             }
-
-            dadosVeiculos.remove(linhaSelecionada);
-            excluirCSV(caminhoArquivo);
-
         });
 
         // ------- CAIXA SUPERIOR HORIZONTAL (HBox) -------
