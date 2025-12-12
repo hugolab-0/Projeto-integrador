@@ -1,3 +1,4 @@
+
 package br.com.sp.jandira.senai.VagaCerta;
 
 import javafx.application.Application;
@@ -13,15 +14,24 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 public class TelaDeCadastro extends Application {
 
-    @Override
-    public void start(Stage stage) {
 
+    @Override
+    public void start (Stage stage){
         stage.setTitle(" Vaga Certa");
+        String caminhoArquivo = "src/main/data/veiculo_estacionados.csv";
+        String caminhoHistorico = "src/main/data/historico_do_estacionamento.csv";
+
+
+
+
 
         // ------- ELEMENTOS PRICIPAIS DA PAGINA -------
-        Button btnAddUser = new Button ("\uD83D\uDC64");
+        Button btnAddUser = new Button("\uD83D\uDC64");
         Button btnExcluir = new Button("\uD83D\uDDD1");
         Button btnRegistro = new Button("\uD83D\uDCDC");
         Button btnSair = new Button("\uD83C\uDFC3\u200D");
@@ -65,7 +75,7 @@ public class TelaDeCadastro extends Application {
 
         Button btnRegistrar = new Button("Registrar");
         btnRegistrar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
-        btnRegistrar.setPadding(new Insets(10, 30, 10 , 30));
+        btnRegistrar.setPadding(new Insets(10, 30, 10, 30));
 
         Button btnLimpar = new Button("Limpar");
         btnLimpar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
@@ -75,20 +85,20 @@ public class TelaDeCadastro extends Application {
 
         VBox caixaDeInformacoes = new VBox(10);
         caixaDeInformacoes.setStyle("-fx-background-color: #3f3242");
-        VBox.setMargin(nome,new Insets(8, 0, 0, 10));
-        VBox.setMargin( campoNome,new Insets(0, 0, 10, 10));
+        VBox.setMargin(nome, new Insets(8, 0, 0, 10));
+        VBox.setMargin(campoNome, new Insets(0, 0, 10, 10));
         caixaDeInformacoes.setPrefHeight(80);
         caixaDeInformacoes.setMaxWidth(390);
         caixaDeInformacoes.getChildren().addAll(nome, campoNome);
 
         VBox caixaDeInformacoesCar = new VBox(12);
         caixaDeInformacoesCar.setStyle("-fx-background-color: #322431");
-        VBox.setMargin( modelo, new Insets(8, 0, 0, 10));
-        VBox.setMargin( placa, new Insets(8, 0, 0, 10));
-        VBox.setMargin( cor, new Insets(8, 0, 0, 10));
-        VBox.setMargin( campoModelo,new Insets(0, 0, 0, 10));
-        VBox.setMargin( campoPlaca,new Insets(0, 0, 0, 10));
-        VBox.setMargin( campoCor,new Insets(0, 0, 0, 10));
+        VBox.setMargin(modelo, new Insets(8, 0, 0, 10));
+        VBox.setMargin(placa, new Insets(8, 0, 0, 10));
+        VBox.setMargin(cor, new Insets(8, 0, 0, 10));
+        VBox.setMargin(campoModelo, new Insets(0, 0, 0, 10));
+        VBox.setMargin(campoPlaca, new Insets(0, 0, 0, 10));
+        VBox.setMargin(campoCor, new Insets(0, 0, 0, 10));
         caixaDeInformacoesCar.setPrefHeight(300);
         caixaDeInformacoesCar.setMaxWidth(405);
         caixaDeInformacoesCar.getChildren().addAll(modelo, campoModelo, placa, campoPlaca, cor, campoCor);
@@ -102,7 +112,6 @@ public class TelaDeCadastro extends Application {
         caixaDeBotoes.getChildren().addAll(btnRegistrar, btnLimpar);
 
 
-
         // ------------- AJUSTE NOS ELEMENTOS (Estilos de Botão) --------
 
         String buttonStyle = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0";
@@ -112,39 +121,39 @@ public class TelaDeCadastro extends Application {
         btnSair.setStyle(buttonStyle);
 
         btnAddUser.setOnAction(e -> {
-            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #88ff00; -fx-border-color: #88ff00");
+            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #88ff00; -fx-border-color: #88ff00");
             btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
         });
         btnExcluir.setOnAction(e -> {
-            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
         });
         btnRegistro.setOnAction(e -> {
-            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
         });
         btnSair.setOnAction(e -> {
-            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
         });
 
-        btnRegistrar.setOnAction( e -> {
+        btnRegistrar.setOnAction(e -> {
             btnRegistrar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px;  -fx-border-color: #88ff00; -fx-text-fill:  #88ff00");
-            btnRegistrar.setPadding(new Insets(10, 30, 10 , 30));
+            btnRegistrar.setPadding(new Insets(10, 30, 10, 30));
             btnLimpar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
             btnLimpar.setPadding(new Insets(10, 40, 10, 40));
         });
-        btnLimpar.setOnAction( e -> {
+        btnLimpar.setOnAction(e -> {
             btnRegistrar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
-            btnRegistrar.setPadding(new Insets(10, 30, 10 , 30));
+            btnRegistrar.setPadding(new Insets(10, 30, 10, 30));
             btnLimpar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px;  -fx-border-color: rgb(213,19,19); -fx-text-fill:  rgb(197,22,22)");
             btnLimpar.setPadding(new Insets(10, 40, 10, 40));
 
@@ -155,7 +164,6 @@ public class TelaDeCadastro extends Application {
         HBox caixaHorizontal = new HBox(15);
         caixaHorizontal.setPadding(new Insets(12));
         caixaHorizontal.getChildren().addAll(btnAddUser, btnExcluir, btnRegistro, btnSair);
-
 
 
         // NOVO CONTAINER HORIZONTAL DE CONTEÚDO (Para colocar a caixa de botões à direita)
@@ -188,9 +196,5 @@ public class TelaDeCadastro extends Application {
         // ------- MOSTRAR A JANELA -------
         stage.setScene(cena);
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
