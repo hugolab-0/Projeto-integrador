@@ -194,6 +194,23 @@ public class TelaDeCadastro extends Application {
             btnLimpar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px;  -fx-border-color: rgb(213,19,19); -fx-text-fill:  rgb(197,22,22)");
             btnLimpar.setPadding(new Insets(10, 40, 10, 40));
 
+            String nomeProprietario = campoNome.getText();
+            String modeloVeiculo = campoModelo.getText();
+            String placaVeiculo = campoPlaca.getText();
+            String corVeiculo = campoCor.getText();
+
+            if (!nomeProprietario.isEmpty() &&
+                    !modeloVeiculo.isEmpty() &&
+                    !placaVeiculo.isEmpty() &&
+                    !corVeiculo.isEmpty()) {
+
+                campoNome.clear();
+                campoModelo.clear();
+                campoPlaca.clear();
+                campoCor.clear();
+
+            }
+
         });
 
 
