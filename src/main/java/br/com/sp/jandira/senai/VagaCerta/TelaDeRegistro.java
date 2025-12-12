@@ -26,6 +26,20 @@ import javafx.beans.value.ObservableValue;
 
 public class TelaDeRegistro extends Application {
 
+    private void excluirCSV(String caminho) {
+        try (java.io.BufferedWriter bw = new java.io.BufferedWriter(new java.io.FileWriter(caminho))) {
+
+            for (String[] linha : dadosVeiculos) {
+                bw.write(String.join(";", linha));
+                bw.newLine();
+            }
+
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar CSV: " + e.getMessage());
+        }
+    }
+
+
     private TableView<String[]> table = new TableView<>();
     private final ObservableList<String[]> dadosVeiculos = FXCollections.observableArrayList();
 
@@ -33,7 +47,7 @@ public class TelaDeRegistro extends Application {
     public void start(Stage stage) {
         stage.setTitle(" Vaga Certa");
 
-        // ------------------ CONFIGURAÇÃO DA TABLEVIEW --------------------
+        // ------------------ 1. CONFIGURAÇÃO DA TABLEVIEW --------------------
 
 
         TableColumn<String[], String> col1 = criarColuna("ID", 0);
@@ -56,6 +70,10 @@ public class TelaDeRegistro extends Application {
         Button btnExcluir = new Button("\uD83D\uDDD1");
         Button btnRegistro = new Button("\uD83D\uDCDC");
         Button btnSair = new Button("\uD83C\uDFC3\u200D");
+
+        Button btnRetirar = new Button("Retirar");
+        btnRetirar.setStyle("-fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+        btnRetirar.setPadding(new Insets(15,70,15,70));
 
 
         //--------- CRIAÇÃO DE COLETA DE INFORMAÇÕES (VBOX) ----------
@@ -98,6 +116,18 @@ public class TelaDeRegistro extends Application {
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
         });
+        btnRegistro.setOnAction( e -> {
+            String[] linhaSelecionada = table.getSelectionModel().getSelectedItem();
+
+            if (linhaSelecionada == null) {
+                System.out.println("Nenhuma linha selecionada.");
+                return;
+            }
+
+            dadosVeiculos.remove(linhaSelecionada);
+            excluirCSV(caminhoArquivo);
+
+        });
 
         // ------- CAIXA SUPERIOR HORIZONTAL (HBox) -------
         HBox caixaHorizontal = new HBox(15);
@@ -107,7 +137,7 @@ public class TelaDeRegistro extends Application {
 
         // NOVO CONTAINER HORIZONTAL DE CONTEÚDO
         VBox colunaDeInformacoes = new VBox(15);
-        colunaDeInformacoes.getChildren().addAll(caixaDeInformacoes);
+        colunaDeInformacoes.getChildren().addAll(caixaDeInformacoes, btnRetirar);
 
 
         HBox conteudoHorizontal = new HBox(30);
@@ -139,9 +169,7 @@ public class TelaDeRegistro extends Application {
     private TableColumn<String[], String> criarColuna(String titulo, int indice) {
         TableColumn<String[], String> coluna = new TableColumn<>(titulo);
         coluna.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String[], String>, ObservableValue<String>>() {
-            @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<String[], String> data) {
-                // Se o array tiver menos colunas do que o esperado, ele não falha
                 if (data.getValue() != null && data.getValue().length > indice) {
                     return new SimpleStringProperty(data.getValue()[indice]);
                 }
@@ -159,16 +187,12 @@ public class TelaDeRegistro extends Application {
 
         try (BufferedReader br = new BufferedReader(new FileReader(path.toFile()))) {
             String linha;
-            // Tente comentar a linha abaixo se o seu arquivo não tiver cabeçalho
-            // br.readLine();
 
             while ((linha = br.readLine()) != null) {
-                // 🔴 ALTERAÇÃO CRUCIAL: USANDO O PONTO E VÍRGULA (;) COMO SEPARADOR
                 String[] valores = linha.split(";");
 
-                // Verifica se a linha tem o número esperado de colunas
                 if (valores.length >= 4) {
-                    // Adiciona o array de valores (a linha) à lista observável
+
                     dadosVeiculos.add(valores);
                 } else {
                     System.err.println("Linha ignorada por ter menos de 4 colunas: " + linha);
@@ -182,8 +206,5 @@ public class TelaDeRegistro extends Application {
             System.err.println("---------------------------------------------------------");
         }
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
+
