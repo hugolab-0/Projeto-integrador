@@ -1,5 +1,6 @@
 package br.com.sp.jandira.senai.VagaCerta;
 
+import br.com.sp.jandira.senai.VagaCerta.excluir.ExcluirVeiculos;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -60,12 +61,26 @@ public class TelaDeRetirar extends Application {
 
 
         //--------- CRIAÇÃO DE COLETA DE INFORMAÇÕES (VBOX) ----------
+        TextField campoPesquisa = new TextField();
+        campoPesquisa.setPromptText("Pesquisar placa...");
+        campoPesquisa.setStyle("-fx-font-size: 10px");
+        campoPesquisa.setPadding(new Insets(7, 60, 7, 60));
+
+
+        Button btnPesquisar = new Button("Buscar");
+        btnPesquisar.setStyle("-fx-font-size: 10px; -fx-background-color: #322f32; -fx-text-fill: white;");
+        btnPesquisar.setPadding(new Insets(7, 50, 7, 50));
+
+        HBox barraPesquisa = new HBox(10);
+        barraPesquisa.setPadding(new Insets(10));
+        barraPesquisa.getChildren().addAll(campoPesquisa, btnPesquisar);
+
         VBox caixaDeInformacoes = new VBox(12);
         VBox.setMargin(caixaDeInformacoes, new Insets(25));
         caixaDeInformacoes.setStyle("-fx-background-color: #322431");
         caixaDeInformacoes.setPrefHeight(405);
         caixaDeInformacoes.setMaxWidth(850);
-        caixaDeInformacoes.getChildren().addAll(table);
+        caixaDeInformacoes.getChildren().addAll(barraPesquisa, table);
 
         // ------------- AJUSTE NOS ELEMENTOS (Estilos de Botão) --------
 
@@ -141,12 +156,57 @@ public class TelaDeRetirar extends Application {
                 System.exit(0);
             }
         });
+        btnPesquisar.setOnAction(e -> {
+            String texto = campoPesquisa.getText().trim().toLowerCase();
+
+            if (texto.isEmpty()) {
+                table.setItems(dadosVeiculos);
+                return;
+            }
+
+            ObservableList<String[]> filtrado = FXCollections.observableArrayList();
+
+            for (String[] linha : dadosVeiculos) {
+                if (linha.length > 3 && linha[3].toLowerCase().contains(texto)) {
+                    filtrado.add(linha);
+                }
+            }
+
+            table.setItems(filtrado);
+        });
         btnRetirar.setOnAction(e->{
             String[] linhaSelecionada = table.getSelectionModel().getSelectedItem();
 
-            if (linhaSelecionada != null) {
+            if (linhaSelecionada == null) {
+                Alert alerta = new Alert(Alert.AlertType.WARNING);
+                alerta.setHeaderText("Nenhum veículo selecionado.");
+                alerta.setContentText("Selecione um veículo na lista.");
+                alerta.show();
+                return;
+            }
+
+            // Converte o vetor em linha CSV novamente
+            String linhaCSV = String.join(";", linhaSelecionada);
+
+            Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacao.setHeaderText("Confirmar remoção");
+            confirmacao.setContentText("Deseja realmente remover este veículo?");
+            ButtonType sim = new ButtonType("Sim");
+            ButtonType nao = new ButtonType("Não");
+            confirmacao.getButtonTypes().setAll(sim, nao);
+
+            if (confirmacao.showAndWait().get() == sim) {
+
+                // 🔥 REMOVE DO CSV A LINHA EXATA
+                ExcluirVeiculos.removerLinhaExata(linhaCSV);
+
+                // 🔥 REMOVE DA TABELA
                 dadosVeiculos.remove(linhaSelecionada);
 
+                Alert sucesso = new Alert(Alert.AlertType.INFORMATION);
+                sucesso.setHeaderText("Veículo removido");
+                sucesso.setContentText("A linha foi apagada do arquivo e removida da tabela.");
+                sucesso.show();
             }
         });
         btnRetirar.setStyle("; -fx-font-size: 25px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
