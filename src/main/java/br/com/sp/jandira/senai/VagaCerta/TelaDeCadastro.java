@@ -4,9 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority; // Importante para o Priority.ALWAYS
 import javafx.scene.layout.StackPane;
@@ -14,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.util.Optional;
 
 public class TelaDeCadastro extends Application {
     String csvPasta = "src/main/data/veiculo_estacionados.csv";
@@ -21,7 +20,7 @@ public class TelaDeCadastro extends Application {
 
     private void salvarRegistroCSV(String iDDoVeiculo, String nome, String modelo, String placa, String cor) {
 
-        String linha = nome + ";" + modelo + ";" + placa + ";" + cor + "\n";
+        String linha = iDDoVeiculo + ";" + nome + ";" + modelo + ";" + placa + ";" + cor + "\n";
 
         try {
             FileWriter escrita = new FileWriter(csvPasta,  true);
@@ -130,34 +129,76 @@ public class TelaDeCadastro extends Application {
         // ------------- AJUSTE NOS ELEMENTOS (Estilos de Botão) --------
 
         String buttonStyle = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0";
-        btnAddUser.setStyle(buttonStyle);
+        btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #88ff00; -fx-border-color: #88ff00");
         btnExcluir.setStyle(buttonStyle);
         btnRegistro.setStyle(buttonStyle);
         btnSair.setStyle(buttonStyle);
 
         btnAddUser.setOnAction(e -> {
-            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #88ff00; -fx-border-color: #88ff00");
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #F4F0F0");
             btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+
+            TelaDeCadastro telaC = new TelaDeCadastro();
+            Stage novaJanela = new Stage();
+            try {
+                telaC.start(novaJanela);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
         });
         btnExcluir.setOnAction(e -> {
-            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:   #F4F0F0");
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+
+            TelaDeRetirar telaR = new TelaDeRetirar();
+            Stage novaJanela = new Stage();
+            try {
+                telaR.start(novaJanela);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
         });
         btnRegistro.setOnAction(e -> {
-            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
+            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #F4F0F0; ");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+
+            TelaDeRegistro telaRe = new TelaDeRegistro();
+            Stage novaJanela = new Stage();
+            try {
+                telaRe.start(novaJanela);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
         btnSair.setOnAction(e -> {
-            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0");
+            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0");
+            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
+
+            Alert alerta  = new Alert(Alert.AlertType.CONFIRMATION);
+            alerta.setTitle("Fechar aplicação");
+            alerta.setHeaderText("deseja mesmo sair?");
+
+            ButtonType sim = new ButtonType("Sim");
+            ButtonType nao = new ButtonType("Não");
+
+            alerta.getButtonTypes().setAll(sim, nao);
+
+            Optional<ButtonType> resultado = alerta.showAndWait();
+
+            if (resultado.isPresent() && resultado.get() == sim) {
+
+                System.exit(0);
+            }
         });
 
         btnRegistrar.setOnAction(e -> {

@@ -5,9 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -18,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import javafx.util.Callback;
 import javafx.beans.property.SimpleStringProperty;
@@ -25,20 +24,6 @@ import javafx.beans.value.ObservableValue;
 
 
 public class TelaDeRegistro extends Application {
-
-    private void excluirCSV(String caminho) {
-        try (java.io.BufferedWriter bw = new java.io.BufferedWriter(new java.io.FileWriter(caminho))) {
-
-            for (String[] linha : dadosVeiculos) {
-                bw.write(String.join(";", linha));
-                bw.newLine();
-            }
-
-        } catch (IOException e) {
-            System.err.println("Erro ao salvar CSV: " + e.getMessage());
-        }
-    }
-
 
     private TableView<String[]> table = new TableView<>();
     private final ObservableList<String[]> dadosVeiculos = FXCollections.observableArrayList();
@@ -62,7 +47,7 @@ public class TelaDeRegistro extends Application {
         table.getColumns().addAll(col1, col2, col3, col4, col5, col6);
         table.setItems(dadosVeiculos);
         // Caminho
-        String caminhoArquivo = "src/main/data/veiculo_estacionados.csv";
+        String caminhoArquivo = "src/main/data/historico_do_estacionamento.csv";
 
       lerEPopularCSV(caminhoArquivo);
 
@@ -70,10 +55,6 @@ public class TelaDeRegistro extends Application {
         Button btnExcluir = new Button("\uD83D\uDDD1");
         Button btnRegistro = new Button("\uD83D\uDCDC");
         Button btnSair = new Button("\uD83C\uDFC3\u200D");
-
-        Button btnRetirar = new Button("Retirar");
-        btnRetirar.setStyle("-fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-        btnRetirar.setPadding(new Insets(15,70,15,70));
 
 
         //--------- CRIAÇÃO DE COLETA DE INFORMAÇÕES (VBOX) ----------
@@ -89,45 +70,76 @@ public class TelaDeRegistro extends Application {
         String buttonStyle = "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0";
         btnAddUser.setStyle(buttonStyle);
         btnExcluir.setStyle(buttonStyle);
-        btnRegistro.setStyle(buttonStyle);
+        btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #88ff00; -fx-border-color: #88ff00");
         btnSair.setStyle(buttonStyle);
 
         btnAddUser.setOnAction(e -> {
-            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #88ff00; -fx-border-color: #88ff00");
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0");
             btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+
+            TelaDeCadastro telaC = new TelaDeCadastro();
+            Stage novaJanela = new Stage();
+            try {
+                telaC.start(novaJanela);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
         });
         btnExcluir.setOnAction(e -> {
-            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #F4F0F0");
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+
+            TelaDeRetirar telaR = new TelaDeRetirar();
+            Stage novaJanela = new Stage();
+            try {
+                telaR.start(novaJanela);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
         });
         btnRegistro.setOnAction(e -> {
-            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
-            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
+            btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #F4F0F0");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+
+            TelaDeRegistro telaRe = new TelaDeRegistro();
+            Stage novaJanela = new Stage();
+            try {
+                telaRe.start(novaJanela);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
         btnSair.setOnAction(e -> {
-            btnAddUser.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
+            btnAddUser.setStyle( "-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnExcluir.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnRegistro.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
             btnSair.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 35px; -fx-background-color: #322f32; -fx-text-fill:  #88ff00; -fx-border-color: #88ff00");
-        });
-        btnRegistro.setOnAction( e -> {
-            String[] linhaSelecionada = table.getSelectionModel().getSelectedItem();
 
-            if (linhaSelecionada != null) {
-                System.out.println("Nenhuma linha selecionada.");
-                return;
-            }else {
+            Alert alerta  = new Alert(Alert.AlertType.CONFIRMATION);
+            alerta.setTitle("Fechar aplicação");
+            alerta.setHeaderText("deseja mesmo sair?");
 
-                dadosVeiculos.remove(linhaSelecionada);
-                excluirCSV(caminhoArquivo);
+            ButtonType sim = new ButtonType("Sim");
+            ButtonType nao = new ButtonType("Não");
+
+            alerta.getButtonTypes().setAll(sim, nao);
+
+            Optional<ButtonType> resultado = alerta.showAndWait();
+
+            if (resultado.isPresent() && resultado.get() == sim) {
+
+                System.exit(0);
             }
         });
+
 
         // ------- CAIXA SUPERIOR HORIZONTAL (HBox) -------
         HBox caixaHorizontal = new HBox(15);
@@ -137,7 +149,7 @@ public class TelaDeRegistro extends Application {
 
         // NOVO CONTAINER HORIZONTAL DE CONTEÚDO
         VBox colunaDeInformacoes = new VBox(15);
-        colunaDeInformacoes.getChildren().addAll(caixaDeInformacoes, btnRetirar);
+        colunaDeInformacoes.getChildren().addAll(caixaDeInformacoes);
 
 
         HBox conteudoHorizontal = new HBox(30);
