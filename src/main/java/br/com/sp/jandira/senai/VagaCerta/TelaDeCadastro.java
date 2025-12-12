@@ -1,4 +1,3 @@
-
 package br.com.sp.jandira.senai.VagaCerta;
 
 import javafx.application.Application;
@@ -14,20 +13,36 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 
 public class TelaDeCadastro extends Application {
+    String csvPasta = "src/main/data/veiculo_estacionados.csv";
+    String csvPasta2 = "src/main/data/historico_do_estacionamento.csv";
+
+    private void salvarRegistroCSV(String nome, String modelo, String placa, String cor) {
+
+        String linha = nome + ";" + modelo + ";" + placa + ";" + cor + "\n";
+
+        try {
+            FileWriter escrita = new FileWriter(csvPasta,  true);
+            escrita.write(linha);
+            escrita.close();
+
+            FileWriter escrita2 = new FileWriter(csvPasta2, true);
+            escrita2.write(linha);
+            escrita2.close();
+
+
+            System.out.println("Registro salvo com sucesso!");
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar arquivo: " + e.getMessage());
+        }
+    }
 
 
     @Override
     public void start (Stage stage){
         stage.setTitle(" Vaga Certa");
-        String caminhoArquivo = "src/main/data/veiculo_estacionados.csv";
-        String caminhoHistorico = "src/main/data/historico_do_estacionamento.csv";
-
-
-
 
 
         // ------- ELEMENTOS PRICIPAIS DA PAGINA -------
@@ -150,6 +165,28 @@ public class TelaDeCadastro extends Application {
             btnRegistrar.setPadding(new Insets(10, 30, 10, 30));
             btnLimpar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
             btnLimpar.setPadding(new Insets(10, 40, 10, 40));
+
+            String nomeProprietario = campoNome.getText();
+            String modeloVeiculo = campoModelo.getText();
+            String placaVeiculo = campoPlaca.getText();
+            String corVeiculo = campoCor.getText();
+
+            if (!nomeProprietario.isEmpty() &&
+                    !modeloVeiculo.isEmpty() &&
+                    !placaVeiculo.isEmpty() &&
+                    !corVeiculo.isEmpty()) {
+
+                campoNome.clear();
+                campoModelo.clear();
+                campoPlaca.clear();
+                campoCor.clear();
+
+                salvarRegistroCSV(nomeProprietario, modeloVeiculo, placaVeiculo, corVeiculo);
+
+            } else {
+            System.out.println("Erro: Preencha todos os campos antes de registrar.");
+
+        }
         });
         btnLimpar.setOnAction(e -> {
             btnRegistrar.setStyle("-fx-background-color: #3f3242; -fx-text-fill: #ecdfd2; -fx-font-size: 20px");
