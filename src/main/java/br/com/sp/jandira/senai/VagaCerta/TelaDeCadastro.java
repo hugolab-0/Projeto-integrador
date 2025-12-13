@@ -1,5 +1,6 @@
 package br.com.sp.jandira.senai.VagaCerta;
 
+import br.com.sp.jandira.senai.VagaCerta.calculotempo.ValorETempo;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -222,6 +223,8 @@ public class TelaDeCadastro extends Application {
                 campoModelo.clear();
                 campoPlaca.clear();
                 campoCor.clear();
+
+                ValorETempo.iniciarContador();
 
                 salvarRegistroCSV(iDDoVeiculo, nomeProprietario, modeloVeiculo, placaVeiculo, corVeiculo);
 

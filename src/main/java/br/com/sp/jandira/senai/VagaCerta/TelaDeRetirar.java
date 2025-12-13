@@ -1,5 +1,6 @@
 package br.com.sp.jandira.senai.VagaCerta;
 
+import br.com.sp.jandira.senai.VagaCerta.calculotempo.ValorETempo;
 import br.com.sp.jandira.senai.VagaCerta.excluir.ExcluirVeiculos;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -41,11 +42,13 @@ public class TelaDeRetirar extends Application {
         TableColumn<String[], String> col3 = criarColuna("MODELO", 2);
         TableColumn<String[], String> col4 = criarColuna("PLACA", 3);
         TableColumn<String[], String> col5 = criarColuna("COR", 4);
-        TableColumn<String[], String> col6 = criarColuna("Total a ser pago", 6);
+        TableColumn<String[], String> col6 = criarColuna("Tempo permanecido", 6);
+        TableColumn<String[], String> col7 = criarColuna("Total a ser pago", 5);
 
 
 
-        table.getColumns().addAll(col1, col2, col3, col4, col5, col6);
+
+        table.getColumns().addAll(col1, col2, col3, col4, col5, col6, col7);
         table.setItems(dadosVeiculos);
         // Caminho
         String caminhoArquivo = "src/main/data/veiculo_estacionados.csv";
@@ -182,6 +185,10 @@ public class TelaDeRetirar extends Application {
                 alerta.setHeaderText("Nenhum veículo selecionado.");
                 alerta.setContentText("Selecione um veículo na lista.");
                 alerta.show();
+
+                ValorETempo.finalizarContador();
+                Double valor = ValorETempo.calcularValor();
+
                 return;
             }
 
@@ -197,10 +204,10 @@ public class TelaDeRetirar extends Application {
 
             if (confirmacao.showAndWait().get() == sim) {
 
-                // 🔥 REMOVE DO CSV A LINHA EXATA
+
                 ExcluirVeiculos.removerLinhaExata(linhaCSV);
 
-                // 🔥 REMOVE DA TABELA
+
                 dadosVeiculos.remove(linhaSelecionada);
 
                 Alert sucesso = new Alert(Alert.AlertType.INFORMATION);

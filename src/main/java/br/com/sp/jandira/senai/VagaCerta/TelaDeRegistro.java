@@ -40,11 +40,13 @@ public class TelaDeRegistro extends Application {
         TableColumn<String[], String> col3 = criarColuna("MODELO", 2);
         TableColumn<String[], String> col4 = criarColuna("PLACA", 3);
         TableColumn<String[], String> col5 = criarColuna("COR", 4);
-        TableColumn<String[], String> col6 = criarColuna("Total a ser pago", 5);
+        TableColumn<String[], String> col6 = criarColuna("Tempo permanecido", 6);
+        TableColumn<String[], String> col7 = criarColuna("Total a ser pago", 5);
 
 
 
-        table.getColumns().addAll(col1, col2, col3, col4, col5, col6);
+
+        table.getColumns().addAll(col1, col2, col3, col4, col5, col6, col7);
         table.setItems(dadosVeiculos);
         // Caminho
         String caminhoArquivo = "src/main/data/historico_do_estacionamento.csv";
