@@ -37,13 +37,12 @@ public class ValorETempo {
 
         long minutos = calcularTempoEmMinutos();
 
-        double valorPorHora = 5.0;
+        // converte minutos para horas reais (decimal)
+        double horas = minutos / 60.0;
 
-        long horas = (long) Math.ceil(minutos / 60.0);
-
-        return horas * valorPorHora;
+        // R$10 por hora, sem arredondar
+        return horas * 10.0;
     }
-
     // Retorna o tempo inicial (em millis)
     public static long getInicio() {
         return inicio;

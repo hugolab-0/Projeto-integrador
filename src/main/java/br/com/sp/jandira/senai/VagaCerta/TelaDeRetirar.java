@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -26,6 +27,20 @@ import javafx.beans.value.ObservableValue;
 
 
 public class TelaDeRetirar extends Application {
+    String csvPasta2 = "src/main/data/historico_do_estacionamento.csv";
+
+    private void salvarLinhaNoCSV2(String[] linha) {
+
+        try (java.io.FileWriter writer =
+                     new java.io.FileWriter("src/main/data/historico_do_estacionamento.csv", true)) {
+
+            String linhaCSV = String.join(";", linha);
+            writer.append(linhaCSV).append("\n");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private TableView<String[]> table = new TableView<>();
     private final ObservableList<String[]> dadosVeiculos = FXCollections.observableArrayList();
@@ -33,6 +48,8 @@ public class TelaDeRetirar extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle(" Vaga Certa");
+
+
 
         // ------------------ 1. CONFIGURAÇÃO DA TABLEVIEW --------------------
 
@@ -42,8 +59,9 @@ public class TelaDeRetirar extends Application {
         TableColumn<String[], String> col3 = criarColuna("MODELO", 2);
         TableColumn<String[], String> col4 = criarColuna("PLACA", 3);
         TableColumn<String[], String> col5 = criarColuna("COR", 4);
-        TableColumn<String[], String> col6 = criarColuna("Tempo permanecido", 6);
         TableColumn<String[], String> col7 = criarColuna("Total a ser pago", 5);
+        TableColumn<String[], String> col6 = criarColuna("Tempo permanecido", 6);
+
 
 
 
@@ -180,41 +198,45 @@ public class TelaDeRetirar extends Application {
         btnRetirar.setOnAction(e->{
             String[] linhaSelecionada = table.getSelectionModel().getSelectedItem();
 
+            // Validação
             if (linhaSelecionada == null) {
                 Alert alerta = new Alert(Alert.AlertType.WARNING);
                 alerta.setHeaderText("Nenhum veículo selecionado.");
                 alerta.setContentText("Selecione um veículo na lista.");
                 alerta.show();
-
-                ValorETempo.finalizarContador();
-                Double valor = ValorETempo.calcularValor();
-
                 return;
             }
 
-            // Converte o vetor em linha CSV novamente
+            //  Finaliza o tempo
+            ValorETempo.finalizarContador();
+
+            //  Calcula tempo e valor
+            long tempoMinutos = ValorETempo.calcularTempoEmMinutos();
+            double valor = ValorETempo.calcularValor();
+
+            // Mostra o tempo pro usuário
+            Alert info = new Alert(Alert.AlertType.INFORMATION);
+            info.setHeaderText("Tempo de permanência");
+            info.setContentText(
+                    "Tempo estacionado: " + tempoMinutos + " minutos\n" +
+                            "Valor a pagar: R$ " + valor
+            );
+            info.showAndWait();
+
+            //  Cria nova linha com tempo
+            String[] linhaComTempo = new String[linhaSelecionada.length + 1];
+            System.arraycopy(linhaSelecionada, 0, linhaComTempo, 0, linhaSelecionada.length);
+            linhaComTempo[linhaComTempo.length - 1] = tempoMinutos + " minutos";
+
+            //  Salva no CSV histórico
+            salvarLinhaNoCSV2(linhaComTempo);
+
+            //  Remove do CSV original
             String linhaCSV = String.join(";", linhaSelecionada);
+            ExcluirVeiculos.removerLinhaExata(linhaCSV);
 
-            Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacao.setHeaderText("Confirmar remoção");
-            confirmacao.setContentText("Deseja realmente remover este veículo?");
-            ButtonType sim = new ButtonType("Sim");
-            ButtonType nao = new ButtonType("Não");
-            confirmacao.getButtonTypes().setAll(sim, nao);
-
-            if (confirmacao.showAndWait().get() == sim) {
-
-
-                ExcluirVeiculos.removerLinhaExata(linhaCSV);
-
-
-                dadosVeiculos.remove(linhaSelecionada);
-
-                Alert sucesso = new Alert(Alert.AlertType.INFORMATION);
-                sucesso.setHeaderText("Veículo removido");
-                sucesso.setContentText("A linha foi apagada do arquivo e removida da tabela.");
-                sucesso.show();
-            }
+            // Remove da tabela
+            dadosVeiculos.remove(linhaSelecionada);
         });
         btnRetirar.setStyle("; -fx-font-size: 25px; -fx-background-color: #322f32; -fx-text-fill: #F4F0F0;");
         btnRetirar.setPadding(new Insets(20, 80, 20, 80));
