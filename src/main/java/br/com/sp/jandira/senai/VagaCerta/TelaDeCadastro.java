@@ -28,10 +28,6 @@ public class TelaDeCadastro extends Application {
             escrita.write(linha);
             escrita.close();
 
-            FileWriter escrita2 = new FileWriter(csvPasta2, true);
-            escrita2.write(linha);
-            escrita2.close();
-
 
             System.out.println("Registro salvo com sucesso!");
         } catch (IOException e) {

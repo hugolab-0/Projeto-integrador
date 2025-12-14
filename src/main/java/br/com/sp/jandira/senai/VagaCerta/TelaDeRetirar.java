@@ -27,12 +27,11 @@ import javafx.beans.value.ObservableValue;
 
 
 public class TelaDeRetirar extends Application {
-    String csvPasta2 = "src/main/data/historico_do_estacionamento.csv";
 
     private void salvarLinhaNoCSV2(String[] linha) {
 
-        try (java.io.FileWriter writer =
-                     new java.io.FileWriter("src/main/data/historico_do_estacionamento.csv", true)) {
+        try (FileWriter writer =
+                     new FileWriter("src/main/data/historico_do_estacionamento.csv", true)) {
 
             String linhaCSV = String.join(";", linha);
             writer.append(linhaCSV).append("\n");
@@ -59,14 +58,12 @@ public class TelaDeRetirar extends Application {
         TableColumn<String[], String> col3 = criarColuna("MODELO", 2);
         TableColumn<String[], String> col4 = criarColuna("PLACA", 3);
         TableColumn<String[], String> col5 = criarColuna("COR", 4);
-        TableColumn<String[], String> col7 = criarColuna("Total a ser pago", 5);
-        TableColumn<String[], String> col6 = criarColuna("Tempo permanecido", 6);
 
 
 
 
 
-        table.getColumns().addAll(col1, col2, col3, col4, col5, col6, col7);
+        table.getColumns().addAll(col1, col2, col3, col4, col5);
         table.setItems(dadosVeiculos);
         // Caminho
         String caminhoArquivo = "src/main/data/veiculo_estacionados.csv";
@@ -211,8 +208,8 @@ public class TelaDeRetirar extends Application {
             ValorETempo.finalizarContador();
 
             //  Calcula tempo e valor
-            long tempoMinutos = ValorETempo.calcularTempoEmMinutos();
-            double valor = ValorETempo.calcularValor();
+            long tempoMinutos = ValorETempo.getTempoEmMinutos();
+            double valor = ValorETempo.getValorAPagar();
 
             // Mostra o tempo pro usuário
             Alert info = new Alert(Alert.AlertType.INFORMATION);
@@ -224,12 +221,15 @@ public class TelaDeRetirar extends Application {
             info.showAndWait();
 
             //  Cria nova linha com tempo
-            String[] linhaComTempo = new String[linhaSelecionada.length + 1];
-            System.arraycopy(linhaSelecionada, 0, linhaComTempo, 0, linhaSelecionada.length);
-            linhaComTempo[linhaComTempo.length - 1] = tempoMinutos + " minutos";
+            String[] linhaComDados = new String[linhaSelecionada.length + 2];
 
-            //  Salva no CSV histórico
-            salvarLinhaNoCSV2(linhaComTempo);
+            System.arraycopy(linhaSelecionada, 0, linhaComDados, 0, linhaSelecionada.length);
+
+            linhaComDados[linhaSelecionada.length] = ValorETempo.getTempoFormatado();
+            linhaComDados[linhaSelecionada.length + 1] = ValorETempo.getValorFormatado();
+
+// salva o array
+            salvarLinhaNoCSV2(linhaComDados);
 
             //  Remove do CSV original
             String linhaCSV = String.join(";", linhaSelecionada);

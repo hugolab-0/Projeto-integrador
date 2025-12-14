@@ -2,56 +2,44 @@ package br.com.sp.jandira.senai.VagaCerta.calculotempo;
 
 public class ValorETempo {
 
-    // Guarda o tempo em milissegundos
-    private static long inicio;
-    private static long fim;
+    private static long inicio = -1;
+    private static long fim = -1;
 
-    //Inicia o timer (entrada do carro)
+    private static final double VALOR_POR_HORA = 10.0;
+
+    // chama quando o carro ENTRA
     public static void iniciarContador() {
         inicio = System.currentTimeMillis();
-        fim = 0;
+        fim = -1;
     }
 
-    //Finaliza o timer (saída do carro)
-
+    // chama quando o carro SAI
     public static void finalizarContador() {
+        if (inicio == -1) return;
         fim = System.currentTimeMillis();
     }
 
-    //Subtrai o início do fim e retorna o tempo em minutos
-
-    public static long calcularTempoEmMinutos() {
-
-        if (inicio == 0 || fim == 0) {
-            throw new IllegalStateException("Timer não iniciado ou não finalizado.");
+    // tempo total em minutos
+    public static long getTempoEmMinutos() {
+        if (inicio == -1 || fim == -1 || fim < inicio) {
+            return 0;
         }
-
-        long diferencaMillis = fim - inicio;
-
-        return diferencaMillis / 1000 / 60;
+        return (fim - inicio) / 60000;
     }
 
-    //Calcula o valor a pagar com base no tempo
-
-    public static double calcularValor() {
-
-        long minutos = calcularTempoEmMinutos();
-
-        // converte minutos para horas reais (decimal)
-        double horas = minutos / 60.0;
-
-        // R$10 por hora, sem arredondar
-        return horas * 10.0;
-    }
-    // Retorna o tempo inicial (em millis)
-    public static long getInicio() {
-        return inicio;
+    // valor a pagar (SEM arredondar)
+    public static double getValorAPagar() {
+        double horas = getTempoEmMinutos() / 60.0;
+        return horas * VALOR_POR_HORA;
     }
 
+    // texto pronto: "120 minutos"
+    public static String getTempoFormatado() {
+        return getTempoEmMinutos() + " minutos";
+    }
 
-     // Retorna o tempo final (em millis)
-
-    public static long getFim() {
-        return fim;
+    // texto pronto: "R$ 20.50"
+    public static String getValorFormatado() {
+        return "R$ " + String.format("%.2f", getValorAPagar());
     }
 }
