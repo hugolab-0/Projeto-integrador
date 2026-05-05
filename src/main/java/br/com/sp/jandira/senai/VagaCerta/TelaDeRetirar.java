@@ -15,11 +15,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.util.Callback;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,16 +33,45 @@ import javafx.beans.value.ObservableValue;
 
 public class TelaDeRetirar extends Application {
 
-    private void salvarLinhaNoCSV2(String[] linha) {
+    private static final Logger LOGGER = Logger.getLogger(TelaDeRetirar.class.getName());
 
-        try (FileWriter writer =
-                     new FileWriter("src/main/data/historico_do_estacionamento.csv", true)) {
+    private boolean salvarLinhaNoCSV2(String[] linha) {
+        if (linha == null || linha.length == 0) {
+            LOGGER.warning("Tentativa de salvar linha nula ou vazia no histórico.");
+            return false;
+        }
 
+        Path caminhoHistorico = Paths.get("src/main/data/historico_do_estacionamento.csv");
+
+        try {
+            Path diretorioPai = caminhoHistorico.getParent();
+            if (diretorioPai != null && !Files.exists(diretorioPai)) {
+                Files.createDirectories(diretorioPai);
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Não foi possível criar o diretório para o histórico: " + e.getMessage(), e);
+            mostrarAlertaErro("Erro ao salvar histórico",
+                    "Não foi possível criar o diretório de dados.",
+                    "Verifique as permissões do sistema de arquivos.");
+            return false;
+        }
+
+        try (FileWriter writer = new FileWriter(caminhoHistorico.toFile(), true)) {
             String linhaCSV = String.join(";", linha);
             writer.append(linhaCSV).append("\n");
-
+            return true;
+        } catch (SecurityException e) {
+            LOGGER.log(Level.SEVERE, "Permissão negada ao escrever no histórico: " + e.getMessage(), e);
+            mostrarAlertaErro("Erro de permissão",
+                    "Não foi possível salvar no arquivo de histórico.",
+                    "Verifique se o arquivo não está protegido contra escrita.");
+            return false;
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erro de I/O ao salvar no histórico: " + e.getMessage(), e);
+            mostrarAlertaErro("Erro ao salvar histórico",
+                    "Não foi possível escrever no arquivo de histórico.",
+                    "Detalhe: " + e.getMessage());
+            return false;
         }
     }
 
@@ -228,12 +262,29 @@ public class TelaDeRetirar extends Application {
             linhaComDados[linhaSelecionada.length] = ValorETempo.getTempoFormatado();
             linhaComDados[linhaSelecionada.length + 1] = ValorETempo.getValorFormatado();
 
-// salva o array
-            salvarLinhaNoCSV2(linhaComDados);
+            // Salva o array no histórico
+            boolean salvoComSucesso = salvarLinhaNoCSV2(linhaComDados);
+
+            if (!salvoComSucesso) {
+                Alert alertaErro = new Alert(Alert.AlertType.ERROR);
+                alertaErro.setHeaderText("Erro ao registrar retirada");
+                alertaErro.setContentText(
+                        "Não foi possível salvar o registro no histórico. " +
+                        "O veículo não será removido da lista para evitar perda de dados.");
+                alertaErro.showAndWait();
+                return;
+            }
 
             //  Remove do CSV original
-            String linhaCSV = String.join(";", linhaSelecionada);
-            ExcluirVeiculos.removerLinhaExata(linhaCSV);
+            try {
+                String linhaCSV = String.join(";", linhaSelecionada);
+                ExcluirVeiculos.removerLinhaExata(linhaCSV);
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, "Erro ao remover veículo do CSV de estacionados: " + ex.getMessage(), ex);
+                mostrarAlertaErro("Erro ao atualizar lista",
+                        "O histórico foi salvo, mas houve um erro ao remover o veículo da lista de estacionados.",
+                        "Detalhe: " + ex.getMessage());
+            }
 
             // Remove da tabela
             dadosVeiculos.remove(linhaSelecionada);
@@ -294,29 +345,100 @@ public class TelaDeRetirar extends Application {
 
     // MÉTODO QUE LÊ O CSV E PREENCHE O ObservableList
     private void lerEPopularCSV(String caminhoArquivo) {
-        java.nio.file.Path path = Paths.get(caminhoArquivo);
-        System.out.println("Tentando ler o arquivo em: " + path.toAbsolutePath());
+        Path path = Paths.get(caminhoArquivo);
+        LOGGER.info("Tentando ler o arquivo em: " + path.toAbsolutePath());
+
+        // Verifica se o arquivo existe
+        if (!Files.exists(path)) {
+            LOGGER.warning("Arquivo CSV não encontrado: " + path.toAbsolutePath());
+            mostrarAlertaErro("Arquivo não encontrado",
+                    "O arquivo de veículos estacionados não foi encontrado.",
+                    "Caminho esperado: " + path.toAbsolutePath() +
+                    "\nUm arquivo vazio será usado. Os dados aparecerão quando veículos forem cadastrados.");
+            return;
+        }
+
+        // Verifica permissão de leitura
+        if (!Files.isReadable(path)) {
+            LOGGER.severe("Sem permissão de leitura no arquivo: " + path.toAbsolutePath());
+            mostrarAlertaErro("Erro de permissão",
+                    "Não foi possível ler o arquivo de veículos estacionados.",
+                    "O arquivo existe, mas o programa não tem permissão de leitura.\n" +
+                    "Caminho: " + path.toAbsolutePath());
+            return;
+        }
+
+        int linhasLidas = 0;
+        int linhasIgnoradas = 0;
 
         try (BufferedReader br = new BufferedReader(new FileReader(path.toFile()))) {
             String linha;
 
             while ((linha = br.readLine()) != null) {
+                // Ignora linhas vazias ou em branco
+                if (linha.trim().isEmpty()) {
+                    continue;
+                }
+
                 String[] valores = linha.split(";");
 
                 if (valores.length >= 4) {
+                    // Valida que os campos obrigatórios não estão vazios
+                    boolean camposValidos = true;
+                    for (int i = 0; i < 4; i++) {
+                        if (valores[i] == null || valores[i].trim().isEmpty()) {
+                            camposValidos = false;
+                            break;
+                        }
+                    }
 
-                    dadosVeiculos.add(valores);
+                    if (camposValidos) {
+                        dadosVeiculos.add(valores);
+                        linhasLidas++;
+                    } else {
+                        LOGGER.warning("Linha ignorada por conter campos obrigatórios vazios: " + linha);
+                        linhasIgnoradas++;
+                    }
                 } else {
-                    System.err.println("Linha ignorada por ter menos de 4 colunas: " + linha);
+                    LOGGER.warning("Linha ignorada por ter menos de 4 colunas: " + linha);
+                    linhasIgnoradas++;
                 }
             }
+
+            if (linhasIgnoradas > 0) {
+                LOGGER.warning(linhasIgnoradas + " linha(s) foram ignoradas por dados malformados.");
+                mostrarAlertaErro("Dados malformados no CSV",
+                        linhasIgnoradas + " linha(s) foram ignoradas por estarem com formato incorreto.",
+                        "O arquivo pode conter dados corrompidos ou incompletos.\n" +
+                        "Total de veículos carregados: " + linhasLidas);
+            }
+
+            LOGGER.info("CSV lido com sucesso. " + linhasLidas + " veículo(s) carregado(s).");
+
+        } catch (FileNotFoundException e) {
+            LOGGER.log(Level.SEVERE, "Arquivo CSV não encontrado: " + path.toAbsolutePath(), e);
+            mostrarAlertaErro("Arquivo não encontrado",
+                    "O arquivo de veículos estacionados não foi encontrado.",
+                    "Caminho: " + path.toAbsolutePath() + "\nDetalhe: " + e.getMessage());
+        } catch (SecurityException e) {
+            LOGGER.log(Level.SEVERE, "Erro de segurança ao acessar o arquivo CSV: " + e.getMessage(), e);
+            mostrarAlertaErro("Erro de permissão",
+                    "Acesso negado ao arquivo de veículos estacionados.",
+                    "Verifique as permissões do arquivo.\nDetalhe: " + e.getMessage());
         } catch (IOException e) {
-            System.err.println("---------------------------------------------------------");
-            System.err.println("ERRO: Não foi possível ler o arquivo CSV!");
-            System.err.println("Caminho absoluto que o código tentou: " + path.toAbsolutePath());
-            System.err.println("Erro detalhe: " + e.getMessage());
-            System.err.println("---------------------------------------------------------");
+            LOGGER.log(Level.SEVERE, "Erro de I/O ao ler o arquivo CSV: " + e.getMessage(), e);
+            mostrarAlertaErro("Erro ao ler arquivo",
+                    "Não foi possível ler o arquivo de veículos estacionados.",
+                    "Caminho: " + path.toAbsolutePath() + "\nDetalhe: " + e.getMessage());
         }
+    }
+
+    private void mostrarAlertaErro(String titulo, String cabecalho, String conteudo) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(cabecalho);
+        alerta.setContentText(conteudo);
+        alerta.showAndWait();
     }
 }
 
